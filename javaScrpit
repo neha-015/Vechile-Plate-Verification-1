@@ -1,0 +1,31 @@
+async function capture() {
+  const canvas = document.getElementById("canvas");
+  const context = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  context.drawImage(video, 0, 0);
+
+  canvas.toBlob(async (blob) => {
+    const formData = new FormData();
+    formData.append("image", blob, "capture.png");
+
+    document.getElementById("result").innerText = "Processing...";
+
+    const res = await fetch("http://localhost:3000/verify", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById("result").innerText =
+        "✅ Valid Plate: " + data.plate;
+    } else {
+      document.getElementById("result").innerText =
+        "❌ Invalid Plate: " + data.plate;
+    }
+  });
+}
