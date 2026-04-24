@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Number Plate Verification</title>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:50px;">
+
+  <h1>Vehicle Number Plate Verification</h1>
+
+  <input type="file" id="fileInput"><br><br>
+  <button onclick="upload()">Verify</button>
+
+  <h2 id="result"></h2>
+
+  <script>
+    async function upload() {
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) {
+        alert("Upload image first");
+        return;
+      }
+
+      document.getElementById("result").innerText = "Processing...";
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch("http://localhost:3000/verify", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById("result").innerText =
+          "✅ Valid Plate: " + data.plate;
+      } else {
+        document.getElementById("result").innerText =
+          "❌ Invalid Plate: " + data.plate;
+      }
+    }
+  </script>
+
+</body>
+</html>
